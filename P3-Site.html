@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cartoon Recommender</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      height: 100vh;
+    }
+
+    .sidebar {
+      width: 250px;
+      background-color: #2c3e50;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+
+    .sidebar h2 {
+      margin-top: 0;
+    }
+
+    .sidebar label {
+      display: block;
+      margin: 8px 0;
+    }
+
+    .sidebar input[type="text"] {
+      width: 100%;
+      padding: 5px;
+      margin-bottom: 10px;
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 20px;
+      background-color: #ecf0f1;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h2>Preferences</h2>
+    <label for="likedShow">Enter a show you like:</label>
+    <input type="text" id="likedShow" placeholder="e.g. Avatar, Naruto">
+
+    <h3>Choose genres:</h3>
+    <label><input type="checkbox" name="genre" value="Action"> Action</label>
+    <label><input type="checkbox" name="genre" value="Comedy"> Comedy</label>
+    <label><input type="checkbox" name="genre" value="Fantasy"> Fantasy</label>
+    <label><input type="checkbox" name="genre" value="Sci-Fi"> Sci-Fi</label>
+    <label><input type="checkbox" name="genre" value="Adventure"> Adventure</label>
+    <label><input type="checkbox" name="genre" value="Drama"> Drama</label>
+  </div>
+
+  <div class="main-content">
+    <h1>Cartoon Recommender</h1>
+    <p>Use the sidebar to enter your preferences. Recommendations will appear here.</p>
+  </div>
+</body>
+</html>
