@@ -7,6 +7,8 @@
 #include <unordered_set>
 #include <queue>
 #include <iomanip>
+#include <limits>
+#include <unordered_map>
 
 using namespace std;
 
@@ -54,10 +56,72 @@ public:
     }
 
     vector<string> Dijkstra(string start, string end) {
-        // Implementation not provided in original code
-        return {};
-    }
+        if (adjMatrix.find(start) == adjMatrix.end() || adjMatrix.find(end) == adjMatrix.end()) {
+            cout << "Show not found";
+            return {};
+        }
+        // pair {distance,node}
+        priority_queue<pair<double, string>, vector<pair<double, string>>, greater<pair<double, string>>> pq;
+        // show -> distance
+        unordered_map<string,double> distance;
+        //prev node
+        unordered_map<string,string> previous;
+        // initalize distance
+        for (auto& [node, _] : adjMatrix) {
+            distance[node] = numeric_limits<double>::infinity();
+            previous[node] = "";
+        }
+        distance[start] = 0.0;
+        pq.push({0.0, start});
+        while (!pq.empty()) {
+            auto [dist, current] = pq.top();
+            pq.pop();
+            if(current == end) {
+                break;
+            }
+            if(dist > distance[current]) {
+                continue;
+            }
+            for (auto& [neighbor, features] : adjMatrix[current]) {
+                double weight = 1.0/features.size();
+                double newDistance = distance[current] + weight;
+                if (newDistance < distance[neighbor]) {
+                    distance[neighbor] = newDistance;
+                    previous[neighbor] = current;
+                    pq.push({newDistance, neighbor});
+                }
 
+            }
+        }
+        if (distance[end]==numeric_limits<double>::infinity()) {
+            cout<<"No path exists between " << start << " and " << end<<endl;
+            return {};
+        }
+        vector<string> path;
+        for(string current = previous[end]; current != ""; current = previous[current]) {
+            path.push_back(current);
+        }
+        path.push_back(end);
+        reverse(path.begin(), path.end());
+        return path;
+    }
+    void printPath(const vector<string>& path) {
+        if (path.empty()) {
+            return;
+        }
+        cout<<"Shortest path found:" << endl;
+        for (size_t i = 0; i < path.size() -1 ; i++) {
+            string current = path[i];
+            string next = path[i+1];
+            cout << current << " -> " << next << ": ";
+            cout << "Common features: ";
+            for (const auto& feature : adjMatrix[current] [next]) {
+                cout << feature << " ";
+            }
+            cout << endl;
+        }
+        cout<< "\nTotal shows in path:"<<path.size()<<endl;
+    }
     static auto highestScore(set<string>& desired, set<string> featureList) {
         vector<string> result;
         std::set_intersection(
@@ -157,13 +221,27 @@ int main() {
 
     set<string> desired = {"Sci-Fi", "Continuing", "Drama"};
     recList.returnBestMatch(desired, shows);
-
-    // Example of using the new method
     auto recommendations = RecList::getBestMatches(desired, shows);
     for (int i = 0; i < min(3, (int)recommendations.size()); i++) {
         cout << i+1 << ". " << recommendations[i].name
      << " (Score: " << fixed << setprecision(2) << (recommendations[i].score * 100.0) << "%)\n";
     }
+
+    cout << "\n=== Finding paths between shows using Dijkstra's algorithm ===\n" << endl;
+
+    string startShow = "Breaking Bad";
+    string endShow = "Rick and Morty";
+    cout << "Finding path from '" << startShow << "' to '" << endShow << "':" << endl;
+    vector<string> path = recList.Dijkstra(startShow, endShow);
+    recList.printPath(path);
+
+    cout << "\n----------------------------------------\n" << endl;
+
+    startShow = "Friends";
+    endShow = "The Mandalorian";
+    cout << "Finding path from '" << startShow << "' to '" << endShow << "':" << endl;
+    path = recList.Dijkstra(startShow, endShow);
+    recList.printPath(path);
 
     return 0;
 }
