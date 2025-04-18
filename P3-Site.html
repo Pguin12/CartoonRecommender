@@ -40,32 +40,323 @@
       flex: 1;
       padding: 20px;
       background-color: #ecf0f1;
+      overflow-y: auto;
+    }
+
+    .show-card {
+      background: white;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .match-score {
+      font-weight: bold;
+      color: #2980b9;
+      margin: 5px 0;
+    }
+
+    button {
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 15px;
+      width: 100%;
+    }
+
+    button:hover {
+      background: #2980b9;
+    }
+
+    /* Features section */
+    .features-container {
+      max-height: 200px;
+      overflow-y: auto;
+      background-color: #34495e;
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 15px;
+    }
+
+    .features-title {
+      margin-top: 20px;
+      margin-bottom: 5px;
+    }
+
+    #popularFeatures label {
+      margin: 3px 0;
     }
   </style>
 </head>
 <body>
-  <div class="sidebar">
-    <h2>Preferences</h2>
-    <label for="likedShow">Enter a show you like:</label>
-    <input type="text" id="likedShow" placeholder="e.g. Avatar, Naruto">
+<div class="sidebar">
+  <h2>Preferences</h2>
+  <label for="likedShow">Enter a show you like:</label>
+  <input type="text" id="likedShow" placeholder="e.g. Avatar, Breaking Bad">
 
-    <h3>Choose genres:</h3>
-    <label><input type="checkbox" name="genre" value="Action"> Action</label>
-    <label><input type="checkbox" name="genre" value="Comedy"> Comedy</label>
-    <label><input type="checkbox" name="genre" value="Fantasy"> Fantasy</label>
-    <label><input type="checkbox" name="genre" value="Sci-Fi"> Sci-Fi</label>
-    <label><input type="checkbox" name="genre" value="Adventure"> Adventure</label>
-    <label><input type="checkbox" name="genre" value="Drama"> Drama</label>
-    <video width="300" autoplay loop style="margin-top: 20px; border-radius: 10px;" controls>
-      <source src="https://i.imgur.com/ooocPXV.mp4" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
-    
+  <h3 class="features-title">Choose features:</h3>
+  <div class="features-container">
+    <div id="popularFeatures">
+      <label><input type="checkbox" name="feature" value="Action"> Action</label>
+      <label><input type="checkbox" name="feature" value="Comedy"> Comedy</label>
+      <label><input type="checkbox" name="feature" value="Drama"> Drama</label>
+      <label><input type="checkbox" name="feature" value="Fantasy"> Fantasy</label>
+      <label><input type="checkbox" name="feature" value="Sci-Fi"> Sci-Fi</label>
+      <label><input type="checkbox" name="feature" value="Animated"> Animated</label>
+      <label><input type="checkbox" name="feature" value="Adventure"> Adventure</label>
+    </div>
   </div>
 
-  <div class="main-content">
-    <h1>Cartoon Recommender</h1>
-    <p>Use the sidebar to enter your preferences. Recommendations will appear here.</p>
-  </div>
+  <button id="findShowsBtn">Find Shows</button>
+
+  <video width="220" muted
+         autoplay loop style="margin-top: 20px; border-radius: 10px;" controls>
+    <source src="https://i.imgur.com/ooocPXV.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+</div>
+
+<div class="main-content">
+  <h1>Show Recommender</h1>
+  <p>Use the sidebar to enter your preferences. Recommendations will appear here. Make sure to hit Enter!</p>
+  <div id="results"></div>
+</div>
+
+
+<script>
+  const showsDatabase = {
+    shows: [
+      {
+        id: 1,
+        name: "Breaking Bad",
+        features: ["Drama", "2008", "Ended", "Crime", "Critically Acclaimed"]
+      },
+      {
+        id: 2,
+        name: "The Office",
+        features: ["Comedy", "2005", "Ended", "Mockumentary", "Workplace"]
+      },
+      {
+        id: 3,
+        name: "Stranger Things",
+        features: ["Sci-Fi", "2016", "Continuing", "Thriller", "80s Nostalgia"]
+      },
+      {
+        id: 4,
+        name: "Avatar: The Last Airbender",
+        features: ["Animated", "2005", "Ended", "Adventure", "Fantasy"]
+      },
+      {
+        id: 5,
+        name: "Friends",
+        features: ["Comedy", "1994", "Ended", "Sitcom", "New York"]
+      },
+      {
+        id: 6,
+        name: "The Mandalorian",
+        features: ["Sci-Fi", "2019", "Continuing", "Star Wars", "Action"]
+      },
+      {
+        id: 7,
+        name: "The Crown",
+        features: ["Drama", "2016", "Continuing", "Historical", "British Royalty"]
+      },
+      {
+        id: 8,
+        name: "Rick and Morty",
+        features: ["Animated", "2013", "Continuing", "Sci-Fi", "Dark Humor"]
+      },
+      {
+        id: 9,
+        name: "Game of Thrones",
+        features: ["Fantasy", "2011", "Ended", "Drama", "Epic"]
+      },
+      {
+        id: 10,
+        name: "Wednesday",
+        features: ["Mystery", "2022", "Continuing", "Supernatural", "Teen"]
+      },
+      {
+        id: 11,
+        name: "Arcane",
+        features: ["Animated", "2021", "Continuing", "Fantasy", "Action", "Drama"]
+      },
+      {
+        id: 12,
+        name: "The Boys",
+        features: ["Superhero", "2019", "Continuing", "Action", "Dark Comedy", "Drama"]
+      },
+      {
+        id: 13,
+        name: "Succession",
+        features: ["Drama", "2018", "Ended", "Business", "Family", "Critically Acclaimed"]
+      },
+      {
+        id: 14,
+        name: "The Witcher",
+        features: ["Fantasy", "2019", "Continuing", "Adventure", "Action", "Magic"]
+      },
+      {
+        id: 15,
+        name: "Brooklyn Nine-Nine",
+        features: ["Comedy", "2013", "Ended", "Police", "Workplace", "Sitcom"]
+      },
+      {
+        id: 16,
+        name: "The Last of Us",
+        features: ["Drama", "2023", "Continuing", "Post-Apocalyptic", "Adaptation", "Horror"]
+      },
+      {
+        id: 17,
+        name: "Demon Slayer",
+        features: ["Anime", "2019", "Continuing", "Action", "Fantasy", "Supernatural"]
+      },
+      {
+        id: 18,
+        name: "Attack on Titan",
+        features: ["Anime", "2013", "Ended", "Action", "Dark Fantasy", "Post-Apocalyptic"]
+      },
+      {
+        id: 19,
+        name: "The Good Place",
+        features: ["Comedy", "2016", "Ended", "Fantasy", "Philosophical", "Afterlife"]
+      },
+      {
+        id: 20,
+        name: "Bluey",
+        features: ["Animated", "2018", "Continuing", "Children", "Family", "Comedy"]
+      },
+      {
+        id: 21,
+        name: "One Piece",
+        features: ["Anime", "1999", "Continuing", "Adventure", "Action", "Fantasy", "Pirates", "Long-running"]
+      },
+    ],
+
+    getAllFeatures: function() {
+      const features = new Set();
+      this.shows.forEach(show => {
+        show.features.forEach(feature => features.add(feature));
+      });
+      return Array.from(features);
+    },
+
+    searchByFeatures: function(desiredFeatures) {
+      if (!desiredFeatures || !desiredFeatures.length) {
+        return [];
+      }
+
+      return this.shows
+              .map(show => {
+                const matchingFeatures = show.features.filter(feature =>
+                        desiredFeatures.includes(feature)
+                );
+
+                return {
+                  id: show.id,
+                  name: show.name,
+                  score: matchingFeatures.length / desiredFeatures.length,
+                  matchingFeatures: matchingFeatures
+                };
+              })
+              .filter(result => result.score > 0)
+              .sort((a, b) => b.score - a.score);
+    },
+
+    findShowByName: function(name) {
+      if (!name) return null;
+      const lowerName = name.toLowerCase();
+      return this.shows.find(show =>
+              show.name.toLowerCase().includes(lowerName)
+      );
+    }
+  };
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const likedShowInput = document.getElementById('likedShow');
+    const findShowsBtn = document.getElementById('findShowsBtn');
+    const resultsDiv = document.getElementById('results');
+    const popularFeaturesDiv = document.getElementById('popularFeatures');
+
+    const allFeatures = showsDatabase.getAllFeatures();
+
+
+
+    function getSelectedFeatures() {
+      const checkboxes = document.querySelectorAll('input[name="feature"]:checked');
+      return Array.from(checkboxes).map(cb => cb.value);
+    }
+
+    function searchShows() {
+      const likedShow = likedShowInput.value.trim();
+      let searchFeatures = getSelectedFeatures();
+
+      if (likedShow) {
+        const foundShow = showsDatabase.findShowByName(likedShow);
+        if (foundShow) {
+          searchFeatures = [...new Set([...searchFeatures, ...foundShow.features])];
+        }
+      }
+
+      if (searchFeatures.length === 0) {
+        resultsDiv.innerHTML = '<p>Please select at least one feature or enter a show you like.</p>';
+        return;
+      }
+
+      const results = showsDatabase.searchByFeatures(searchFeatures);
+
+      displayResults(results, searchFeatures);
+    }
+
+    function displayResults(results, searchedFeatures) {
+      resultsDiv.innerHTML = '';
+
+      const searchInfo = document.createElement('div');
+      searchInfo.innerHTML = `<h2>Searching for shows with features:</h2>
+                              <p>${searchedFeatures.join(', ')}</p>`;
+      resultsDiv.appendChild(searchInfo);
+
+      if (results.length === 0) {
+        resultsDiv.innerHTML += '<p>No shows found matching your criteria.</p>';
+        return;
+      }
+
+      results.forEach(show => {
+        const showCard = document.createElement('div');
+        showCard.className = 'show-card';
+
+        const percentage = Math.round(show.score * 100);
+
+        showCard.innerHTML = `
+            <h3>${show.name}</h3>
+            <div class="match-score">Match: ${percentage}%</div>
+            <div class="features">
+              <strong>Matching features:</strong>
+              <ul>
+                ${show.matchingFeatures.map(feature => `<li>${feature}</li>`).join('')}
+              </ul>
+            </div>
+            <div>
+              <strong>All features:</strong> ${showsDatabase.shows.find(s => s.id === show.id).features.join(', ')}
+            </div>
+          `;
+
+        resultsDiv.appendChild(showCard);
+      });
+    }
+
+    findShowsBtn.addEventListener('click', searchShows);
+
+    likedShowInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        searchShows();
+      }
+    });
+  });
+</script>
 </body>
 </html>
