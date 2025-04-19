@@ -18,6 +18,21 @@ class RecList {
 
 public:
     RecList() = default;
+    void createList(map<string, set<string>> featureList) {
+        for (auto& [name1, feature1] : featureList) {
+            for (auto& [name2, feature2] : featureList) {
+                if (name1 < name2) {
+                    unordered_set<string> shared = commonFeatures(feature1, feature2);
+                    if (!shared.empty()) {
+                        auto x = adjMatrix[name1];
+                        auto y = adjMatrix[name2];
+                        //x.data[name2] = shared;
+                        //x.data[name1] = shared;
+                    }
+                }
+            }
+        }
+    }
 
     static unordered_set<string> commonFeatures(set<string>& feature1, set<string>& feature2) {
         set<string> A(feature1.begin(), feature1.end());

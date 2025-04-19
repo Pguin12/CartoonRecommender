@@ -1,7 +1,3 @@
-//
-// Created by tiffh on 4/18/2025.
-//
-
 #include "TV_List.h"
 void TV_List::set_show_genre_list()
 {
@@ -32,7 +28,7 @@ void TV_List::set_show_genre_list()
     }
 
 }
-void TV_List::get_id(string my_file, map<int,string>& my_map)
+void TV_List::get_id(string my_file, unordered_map<int,string>& my_map)
 {
     ifstream file(my_file);
     string line;
@@ -89,7 +85,7 @@ TV_List::TV_List()
     // get show type, genre, and show status ids to sort later
     get_id("TV-shows-data/types.csv", type_id);
     get_id("TV-shows-data/genre_types.csv", genre_id);
-    get_id("TV-shows-data/status/csv", status_id);
+    get_id("TV-shows-data/status.csv", status_id);
     set_show_genre_list();
 
 }
