@@ -1,0 +1,7 @@
+# ninja log v6
+85	2360	7667364343573855	CMakeFiles/CartoonRecommender.dir/TV_List.cpp.obj	2b79836c1b3663cc
+71	3165	7667364343437253	CMakeFiles/CartoonRecommender.dir/main.cpp.obj	313cf6cda9681ec3
+3168	3984	7667364374406649	CartoonRecommender.exe	fc31cd26936ffece
+23	836	7667374734617838	CMakeFiles/CartoonRecommender.dir/TV_List.cpp.obj	2b79836c1b3663cc
+8	1547	7667374734467620	CMakeFiles/CartoonRecommender.dir/main.cpp.obj	313cf6cda9681ec3
+1550	2005	7667374749882079	CartoonRecommender.exe	fc31cd26936ffece

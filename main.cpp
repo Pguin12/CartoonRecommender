@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <limits>
 #include <unordered_map>
+#include <TV_List.h>
 
 using namespace std;
 
@@ -204,6 +205,11 @@ public:
 };
 
 int main() {
+
+    TV_List ShowList;
+
+    map<string, set<string>> shows = ShowList.get_show_genre_list();
+    /*
     map<string, set<string>> shows = {{"Breaking Bad", {"Drama", "2008", "Ended", "Crime", "Critically Acclaimed"}},
         {"The Office", {"Comedy", "2005", "Ended", "Mockumentary", "Workplace"}},
         {"Stranger Things", {"Sci-Fi", "2016", "Continuing", "Thriller", "80s Nostalgia"}},
@@ -215,11 +221,12 @@ int main() {
         {"Game of Thrones", {"Fantasy", "2011", "Ended", "Drama", "Epic"}},
         {"Wednesday", {"Mystery", "2022", "Continuing", "Supernatural", "Teen"}}
     };
-
+    */
     RecList recList;
+
     recList.makeMatrix(shows);
 
-    set<string> desired = {"Sci-Fi", "Continuing", "Drama"};
+    set<string> desired = {"Documentary"};
     recList.returnBestMatch(desired, shows);
     auto recommendations = RecList::getBestMatches(desired, shows);
     for (int i = 0; i < min(3, (int)recommendations.size()); i++) {
