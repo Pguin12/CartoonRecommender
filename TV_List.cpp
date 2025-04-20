@@ -27,10 +27,6 @@ void TV_List::set_show_genre_list()
         gnr_to_show.insert({genre, name});
         show_to_gnr.insert({name, genre});
     }
-    for(pair<string, string> item : show_to_gnr) {
-        cout << item.first << " " << item.second << endl;
-    }
-
 }
 void TV_List::get_id(string my_file, unordered_map<int,string>& my_map)
 {

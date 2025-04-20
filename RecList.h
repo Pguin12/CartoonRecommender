@@ -35,8 +35,30 @@ class RecList {
     //map<string, map<string, unordered_set<string>>> adjMatrix;
     unordered_map<string, Info> adjList;
     set<string> listOfShows;
+
+    // list as private attribute
+    TV_List data;
+
+
 public:
     RecList() = default;
+
+    // TODO: implement properly (wip)
+    // populate adjList with data, category = selected genre
+    void connect(string category)
+    {
+        unordered_multimap<string, string> GtoS = data.genre_to_show();
+        unordered_multimap<string, string> StoG = data.show_to_genre();
+
+        auto it = GtoS.begin();
+        for (pair<string, string> p : StoG)
+        {
+            while (it != GtoS.end())
+            {
+
+            }
+        }
+    }
 
     void createList(unordered_map<string, set<string>>& featureList) {
         for (const auto& [item, features] : featureList) {
@@ -112,7 +134,7 @@ public:
             return;
         }
         unordered_map<string, unordered_map<string, unordered_set<string>>> showGraph;
-
+        /*
         for (auto& [feature, info] : adjList) {
             for (const auto& [otherFeature, shows] : info.getMap()) {
                 for (const auto& show1 : shows) {
@@ -123,6 +145,7 @@ public:
                 }
             }
         }
+        */
         using P = pair<double, string>;
         priority_queue<P, vector<P>, greater<P>> pq;
         unordered_map<string,double> distance;
