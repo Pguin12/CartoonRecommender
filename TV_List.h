@@ -23,9 +23,14 @@ class TV_List {
     void get_id(string my_file, unordered_map<int, string> &my_map);
 public:
     TV_List();
-    unordered_map<string, set<string>>& get_show_genre_list();
+    unordered_multimap<string, string>& genre_to_show()
+    {
+        return gnr_to_show;
+    };
+    unordered_multimap<string, string>& show_to_genre()
+    {
+        return show_to_gnr;
+    }
 };
-
-
 
 #endif //TV_LIST_H
