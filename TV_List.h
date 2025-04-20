@@ -1,5 +1,4 @@
 #include <iostream>
-
 #include <vector>
 #include <fstream>
 #include <unordered_map>
@@ -17,16 +16,14 @@ class TV_List {
     unordered_map<int, string> genre_id;
     unordered_map<int, string> status_id;
 
-    map<string, set<string>> show_genre_list;
+    unordered_multimap<string, string> gnr_to_show;
+    unordered_multimap<string, string> show_to_gnr;
 
     void set_show_genre_list();
     void get_id(string my_file, unordered_map<int, string> &my_map);
 public:
     TV_List();
-    map<string, set<string>>& get_show_genre_list()
-    {
-        return show_genre_list;
-    };
+    unordered_map<string, set<string>>& get_show_genre_list();
 };
 
 

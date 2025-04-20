@@ -21,10 +21,14 @@ void TV_List::set_show_genre_list()
         int genreid = stoi(row.second);
 
         // insert genres for each id
-        string show_name = show_id[showid];
-        string show_genre = genre_id[genreid];
+        string name = show_id[showid];
+        string genre = genre_id[genreid];
 
-        show_genre_list[show_name].insert(show_genre);
+        gnr_to_show.insert({genre, name});
+        show_to_gnr.insert({name, genre});
+    }
+    for(pair<string, string> item : show_to_gnr) {
+        cout << item.first << " " << item.second << endl;
     }
 
 }
@@ -50,7 +54,6 @@ void TV_List::get_id(string my_file, unordered_map<int,string>& my_map)
 
     }
 }
-
 TV_List::TV_List()
 {
     ifstream shows("TV-shows-data/shows.csv");
