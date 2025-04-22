@@ -2,7 +2,6 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <map>
 #include <set>
 #include <unordered_set>
 #include <queue>
@@ -10,10 +9,6 @@
 #include <limits>
 #include <unordered_map>
 #include "TV_List.h"
-#include <chrono>
-#include <mutex>
-#include <execution>
-#include <thread>
 
 #pragma once
 
