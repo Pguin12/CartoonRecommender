@@ -1,10 +1,11 @@
 #include <iostream>
+#include <map>
 #include <vector>
 #include <fstream>
-#include <unordered_map>
-#include <map>
 #include <set>
 #include <sstream>
+#include <unordered_map>
+#include <unordered_set>
 using namespace std;
 
 #ifndef TV_LIST_H
@@ -16,21 +17,23 @@ class TV_List {
     unordered_map<int, string> genre_id;
     unordered_map<int, string> status_id;
 
-    unordered_multimap<string, string> gnr_to_show;
-    unordered_multimap<string, string> show_to_gnr;
+    unordered_map<string, set<string>> show_genre_list;
 
     void set_show_genre_list();
     void get_id(string my_file, unordered_map<int, string> &my_map);
 public:
     TV_List();
-    unordered_multimap<string, string>& genre_to_show()
+    unordered_map<string, set<string>>& get_show_genre_list()
     {
-        return gnr_to_show;
+        // for (auto item : show_genre_list) {
+        //     cout << item.first << endl;
+        //     for (auto genres : item.second) {
+        //         cout << " " << genres;
+        //     }
+        //     cout << endl;
+        // }
+        return show_genre_list;
     };
-    unordered_multimap<string, string>& show_to_genre()
-    {
-        return show_to_gnr;
-    }
 };
 
 #endif //TV_LIST_H
