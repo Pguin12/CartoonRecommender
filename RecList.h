@@ -9,9 +9,7 @@
 #include <limits>
 #include <unordered_map>
 #include "TV_List.h"
-
 #pragma once
-
 
 using namespace std;
 
@@ -128,6 +126,71 @@ public:
         return path;
     }
 
+    double heuristic(const string& current, string& goal) {
+        if (adjList.find(current) == adjList.end() || adjList.find(goal) == adjList.end())
+            return 1.0; // Default: low similarity = high cost
+
+        unordered_map<string, unordered_set<string>> currentMap = adjList.at(current).getMap();
+
+        auto it = currentMap.find(goal);
+        if (it == currentMap.end())
+            return 1.0; // No direct connection to goal
+
+        size_t sharedFeatures = it->second.size();
+        return 1.0 / (1 + sharedFeatures); // More features = lower heuristic cost
+    }
+
+    vector<string> aStarSearch(string& start, string& goal) {
+        unordered_map<string, double> gScore;
+        unordered_map<string, double> fScore;
+        unordered_map<string, string> cameFrom;
+
+        auto cmp = [&](const string& a, const string& b) {
+            return fScore[a] > fScore[b];
+        };
+        priority_queue<string, vector<string>, decltype(cmp)> openSet(cmp);
+
+        for (auto& [node, _] : adjList) {
+            gScore[node] = numeric_limits<double>::infinity();
+            fScore[node] = numeric_limits<double>::infinity();
+        }
+
+        gScore[start] = 0;
+        fScore[start] = heuristic(start, goal);
+
+        openSet.push(start);
+
+        while (!openSet.empty()) {
+            string current = openSet.top();
+            openSet.pop();
+
+            if (current == goal) {
+                vector<string> path;
+                while (cameFrom.count(current)) {
+                    path.push_back(current);
+                    current = cameFrom[current];
+                }
+                path.push_back(start);
+                reverse(path.begin(), path.end());
+                return path;
+            }
+
+            unordered_map<string, unordered_set<string>> neighbors = adjList.at(current).getMap();
+            for (const auto& [neighbor, features] : neighbors) {
+                double tentativeG = gScore[current] + 1.0 / (1 + features.size());
+
+                if (tentativeG < gScore[neighbor]) {
+                    cameFrom[neighbor] = current;
+                    gScore[neighbor] = tentativeG;
+                    fScore[neighbor] = tentativeG + heuristic(neighbor, goal);
+                    openSet.push(neighbor);
+                }
+            }
+        }
+
+        return {};
+    }
+
     void printPath(const vector<string>& path) {
         if (path.empty()) {
             return;
@@ -237,7 +300,6 @@ public:
             vector<string> matches = highestScore(desired, features);
             float score = desired.empty() ? 0.0f : static_cast<float>(matches.size()) / desired.size();
 
-            // Add to max heap
             maxHeap.push(Recommendation(name, score, matches));
         }
 
@@ -250,4 +312,6 @@ public:
 
         return results;
     }
+
+
 };
