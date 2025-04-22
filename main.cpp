@@ -2,24 +2,22 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <map>
 #include <set>
-#include <unordered_set>
-#include <queue>
 #include <iomanip>
-#include <limits>
 #include <unordered_map>
 #include "TV_List.h"
 #include "RecList.h"
+#include "RecList2.h"
+#include <chrono>
 using namespace std;
 
 
 //comment hell main
 int main() {
-
+    auto start = chrono::high_resolution_clock::now();
     TV_List ShowList;
-
     unordered_map<string, set<string>> shows = ShowList.get_show_genre_list();
+
 /*
     map<string, set<string>> shows = {{"Breaking Bad", {"Drama", "2008", "Ended", "Crime", "Critically Acclaimed"}},
         {"The Office", {"Comedy", "2005", "Ended", "Mockumentary", "Workplace"}},
@@ -35,18 +33,19 @@ int main() {
 */
     RecList recList;
     recList.createList(shows);
+    /*
     //recList.makeMatrix(shows);
     cout << "read!" << endl;
-    string startShow = "Friends";
-    string endShow = "The Mandalorian";
+    string startShow = "Chernobyl";
+    string endShow = "Avatar: The Last Airbender";
     cout << "Finding path from '" << startShow << "' to '" << endShow << "':" << endl;
-    recList.Dijkstra(startShow, endShow);
+    vector<string> ah = recList.Dijkstra(startShow, endShow);
+    recList.printPath(ah);
+    */
 
 
-/*
+
     set<string> desired = {"Sci-Fi"};
-    cout << "read!" << endl;
-    recList.returnBestMatch(desired, shows);
     cout << "read!" << endl;
     auto recommendations = RecList::getBestMatches(desired, shows);
     cout << "read!" << endl;
@@ -55,43 +54,9 @@ int main() {
      << " (Score: " << fixed << setprecision(2) << (recommendations[i].score * 100.0) << "%)\n";
     }
     cout << "read!" << endl;
-
-
-    /*
-    cout << "\n=== Finding paths between shows using Dijkstra's algorithm ===\n" << endl;
-
-    string startShow = "Breaking Bad";
-    string endShow = "Rick and Morty";
-    cout << "Finding path from '" << startShow << "' to '" << endShow << "':" << endl;
-    vector<string> path = recList.Dijkstra(startShow, endShow);
-    recList.printPath(path);
-    cout << "read!" << endl;
-
-    cout << "\n----------------------------------------\n" << endl;
-
-    startShow = "Friends";
-    endShow = "The Mandalorian";
-    cout << "Finding path from '" << startShow << "' to '" << endShow << "':" << endl;
-    path = recList.Dijkstra(startShow, endShow);
-    recList.printPath(path);
-    cout << "read!" << endl;
-    */
+    auto end = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::seconds>(end - start);
+    cout << duration.count() << " seconds" << endl;
 
     return 0;
 }
-
-/*
-void makeMatrix(map<string, set<string>> featureList) {
-    for (auto& [name1, feature1] : featureList) {
-        for (auto& [name2, feature2] : featureList) {
-            if (name1 < name2) {
-                unordered_set<string> shared = commonFeatures(feature1, feature2);
-                if (!shared.empty()) {
-                    adjMatrix[name1][name2] = shared;
-                    adjMatrix[name2][name1] = shared;
-                }
-            }
-        }
-    }
-}
-*/
