@@ -10,4 +10,10 @@ If they want to recommendations related to 2 shows, they can use Djikstras or A 
 
 If they just want a general filtering system, we used a priority queue to help sort and give the shows with the best result.
 
+TO RUN:
+Download the .cpp and .h files.
+Download the dataset.
+ENSURE ALL FILES IN DATA SET IS LOCATED WHERE YOUR EXECUTABLE IS.
+Run program through main.cpp
+
 Dataset used: https://www.kaggle.com/datasets/denizbilginn/tv-shows
