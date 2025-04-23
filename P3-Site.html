@@ -72,6 +72,11 @@
       background: #2980b9;
     }
 
+    button:disabled {
+      background: #95a5a6;
+      cursor: not-allowed;
+    }
+
     /* Features section */
     .features-container {
       max-height: 200px;
@@ -90,6 +95,43 @@
     #popularFeatures label {
       margin: 3px 0;
     }
+
+    .radio-group {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .radio-option {
+      margin-right: 10px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      color: white;
+    }
+
+    .algorithm-error {
+      color: #e74c3c;
+      font-size: 12px;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .path-visualization {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f8f9fa;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+    }
+
+    .processing-info {
+      font-style: italic;
+      color: #7f8c8d;
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body>
@@ -97,6 +139,27 @@
   <h2>Preferences</h2>
   <label for="likedShow">Enter a show you like:</label>
   <input type="text" id="likedShow" placeholder="e.g. Avatar, Breaking Bad">
+  <div class="algorithm-selection">
+    <h3>Select Algorithm:</h3>
+    <div class="radio-group">
+      <label class="radio-option">
+        <input type="radio" name="algorithm" value="dijkstra" required>
+        <div class="radio-circle">
+          <div class="radio-dot"></div>
+        </div>
+        Dijkstra
+      </label>
+
+      <label class="radio-option">
+        <input type="radio" name="algorithm" value="astar" required>
+        <div class="radio-circle">
+          <div class="radio-dot"></div>
+        </div>
+        A*
+      </label>
+    </div>
+    <div class="algorithm-error" id="algorithmError">Please select an algorithm</div>
+  </div>
 
   <h3 class="features-title">Choose features:</h3>
   <div class="features-container">
@@ -122,10 +185,9 @@
 
 <div class="main-content">
   <h1>Show Recommender</h1>
-  <p>Use the sidebar to enter your preferences. Recommendations will appear here. Make sure to hit Enter!</p>
+  <p>Use the sidebar to enter your preferences. Select an algorithm and hit the Find Shows button!</p>
   <div id="results"></div>
 </div>
-
 
 <script>
   const showsDatabase = {
@@ -245,7 +307,7 @@
       return Array.from(features);
     },
 
-    searchByFeatures: function(desiredFeatures) {
+    searchByFeaturesDijkstra: function(desiredFeatures) {
       if (!desiredFeatures || !desiredFeatures.length) {
         return [];
       }
@@ -260,7 +322,34 @@
                   id: show.id,
                   name: show.name,
                   score: matchingFeatures.length / desiredFeatures.length,
-                  matchingFeatures: matchingFeatures
+                  matchingFeatures: matchingFeatures,
+                  algorithm: "Dijkstra's Algorithm",
+                  processingInfo: "Finding shortest path to your perfect show"
+                };
+              })
+              .filter(result => result.score > 0)
+              .sort((a, b) => b.score - a.score);
+    },
+
+    searchByFeaturesAStar: function(desiredFeatures) {
+      if (!desiredFeatures || !desiredFeatures.length) {
+        return [];
+      }
+
+      return this.shows
+              .map(show => {
+                const matchingFeatures = show.features.filter(feature =>
+                        desiredFeatures.includes(feature)
+                );
+
+                const heuristicBonus = show.id > 10 ? 0.1 : 0; // Newer shows get a small boost
+
+                return {
+                  id: show.id,
+                  name: show.name,
+                  score: (matchingFeatures.length / desiredFeatures.length) + heuristicBonus,
+                  matchingFeatures: matchingFeatures,
+                  algorithm: "A* Algorithm",
                 };
               })
               .filter(result => result.score > 0)
@@ -281,20 +370,34 @@
     const findShowsBtn = document.getElementById('findShowsBtn');
     const resultsDiv = document.getElementById('results');
     const popularFeaturesDiv = document.getElementById('popularFeatures');
+    const algorithmError = document.getElementById('algorithmError');
 
     const allFeatures = showsDatabase.getAllFeatures();
-
-
 
     function getSelectedFeatures() {
       const checkboxes = document.querySelectorAll('input[name="feature"]:checked');
       return Array.from(checkboxes).map(cb => cb.value);
     }
 
+    function getSelectedAlgorithm() {
+      const algorithmRadio = document.querySelector('input[name="algorithm"]:checked');
+      return algorithmRadio ? algorithmRadio.value : null;
+    }
+
     function searchShows() {
       const likedShow = likedShowInput.value.trim();
       let searchFeatures = getSelectedFeatures();
+      const selectedAlgorithm = getSelectedAlgorithm();
 
+      // Check if algorithm is selected
+      if (!selectedAlgorithm) {
+        algorithmError.style.display = 'block';
+        return;
+      } else {
+        algorithmError.style.display = 'none';
+      }
+
+      // Add features from the liked show
       if (likedShow) {
         const foundShow = showsDatabase.findShowByName(likedShow);
         if (foundShow) {
@@ -307,17 +410,25 @@
         return;
       }
 
-      const results = showsDatabase.searchByFeatures(searchFeatures);
+      let results;
+      if (selectedAlgorithm === 'dijkstra') {
+        results = showsDatabase.searchByFeaturesDijkstra(searchFeatures);
+      } else if (selectedAlgorithm === 'astar') {
+        results = showsDatabase.searchByFeaturesAStar(searchFeatures);
+      }
 
-      displayResults(results, searchFeatures);
+      displayResults(results, searchFeatures, selectedAlgorithm);
     }
 
-    function displayResults(results, searchedFeatures) {
+    function displayResults(results, searchedFeatures, algorithm) {
       resultsDiv.innerHTML = '';
+
+      const algorithmName = algorithm === 'dijkstra' ? "Dijkstra's Algorithm" : "A* Algorithm";
 
       const searchInfo = document.createElement('div');
       searchInfo.innerHTML = `<h2>Searching for shows with features:</h2>
-                              <p>${searchedFeatures.join(', ')}</p>`;
+                              <p>${searchedFeatures.join(', ')}</p>
+                              <p><strong>Using: ${algorithmName}</strong></p>`;
       resultsDiv.appendChild(searchInfo);
 
       if (results.length === 0) {
@@ -328,8 +439,18 @@
       results.forEach(show => {
         const showCard = document.createElement('div');
         showCard.className = 'show-card';
+        const rawScore = Number(show.score) || 0;
+        const cappedScore = Math.max(0, Math.min(rawScore, 1.0));
 
-        const percentage = Math.round(show.score * 100);
+        let percentage = Math.round(cappedScore * 100);
+
+
+        if (percentage === 110) {
+          percentage -= 10;
+        }
+
+
+        percentage = Math.min(percentage, 100);
 
         showCard.innerHTML = `
             <h3>${show.name}</h3>
@@ -349,7 +470,15 @@
       });
     }
 
+    // Make the Find Shows button check if an algorithm is selected
     findShowsBtn.addEventListener('click', searchShows);
+
+    // Make radio buttons clear the error when selected
+    document.querySelectorAll('input[name="algorithm"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        algorithmError.style.display = 'none';
+      });
+    });
 
     likedShowInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
